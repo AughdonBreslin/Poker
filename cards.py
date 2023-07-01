@@ -17,7 +17,7 @@ class Rank(Enum):
     QUEEN = "Q", 12
     KING  = "K", 13
     ACE   = "A", 14
-
+    
     def __repr__(self):
         return self.value[0]
     
@@ -34,6 +34,20 @@ class Rank(Enum):
     
     def __ne__(self, other):
         return self.value[1] != other.value[1]
+    
+    @classmethod
+    def from_str(cls, value):
+        for rank in cls:
+            if rank.value[0] == value:
+                return rank
+        raise ValueError(f"'{value}' is not a valid Rank.")
+    
+    @classmethod
+    def from_int(cls, value):
+        for rank in cls:
+            if rank.value[1] == value:
+                return rank
+        raise ValueError(f"'{value}' is not a valid Rank.")
 
 class Suit(Enum):
     CLUB    = "c"
@@ -54,9 +68,15 @@ class Suit(Enum):
         return self.value != other.value
 
 class Card:
-    def __init__(self, rank : Rank, suit : Suit):
-        self.rank : Rank = rank
-        self.suit : Suit = suit
+    def __init__(self, *args):        
+        if len(args) == 1 and isinstance(args[0], str) and len(args[0]) == 2:
+            self.rank : Rank = Rank.from_str(args[0][0])
+            self.suit : Suit = Suit(args[0][1])
+        elif len(args) == 2 and isinstance(args[0], Rank) and isinstance(args[1], Suit):
+            self.rank : Rank = args[0]
+            self.suit : Suit = args[1]
+        else:
+            raise TypeError(f"'{args}' is not a valid Card.")
     
     def __repr__(self):
         return repr(self.rank) + repr(self.suit)
@@ -72,9 +92,6 @@ class Card:
     
     def __ne__(self, other):
         return self.rank != other.rank or self.suit != other.suit
-
-    # def __add__(self, other):
-    #     return self.rank + other.rank + 's' if self.suit == other.suit else self.rank + other.rank + 'o'
 
 class Deck:
     def __init__(self):

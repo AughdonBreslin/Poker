@@ -129,7 +129,6 @@ class Table():
         self.board.dealToBoard()
         # wait
         self.board.dealToBoard()
-        # print(f"{self.board}\n")
         # wait
 
     def reset(self):

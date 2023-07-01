@@ -46,18 +46,22 @@ def determineHandStrength(hand : List[Card], board : List[Card]) -> Tuple[Rankin
     suits : Counter(Suit, int) = Counter([card.suit for card in sorted_cards])
 
     # Check for straight flush
-    straight : List[Card] = findStraight(sorted_cards)
-    if straight is not None:
-        if all(straight[i].suit == straight[i+1].suit for i in range(4)):
-            return Ranking.STRAIGHTFLUSH, straight
+    suitCount : Tuple[Suit, int] = suits.most_common(1)[0]
+    if suitCount[1] >= 5:
+            flush : List[Card] = [card for card in sorted_cards if card.suit == suitCount[0]]
+            straight : List[Card] = findStraight(flush)
+            if straight is not None:
+                return Ranking.STRAIGHTFLUSH, straight
+            # If flush but no straight, impossible to have quads or boat, so return flush
+            return Ranking.FLUSH, flush[:5]
 
-    # Check for four of a kind
+    # Check for quads
     if 4 in ranks.values():
         quads : List[Card] = [card for card in sorted_cards if card.rank == [rank for rank, count in ranks.items() if count == 4][0]]
         kicker : Card = sorted_cards[0] if sorted_cards[0].rank != quads[0].rank else sorted_cards[4]
         return Ranking.QUADS, quads + [kicker]
 
-    # Check for full house
+    # Check for boat
     if len([count for count in ranks.values() if count == 3]) == 2:
         tripRanks : List[Rank] = sorted([rank for rank, count in ranks.items() if count == 3], reverse=True)
         higherTrips : List[Card] = [card for card in sorted_cards if card.rank == tripRanks[0]]
@@ -69,11 +73,7 @@ def determineHandStrength(hand : List[Card], board : List[Card]) -> Tuple[Rankin
         pair : List[Card] = [card for card in cards if card.rank == pairRank]
         return Ranking.BOAT, trips + pair
 
-    # Check for flush
-    suitCount : Tuple[Suit, int] = suits.most_common(1)[0]
-    if suitCount[1] >= 5:
-        flush : List[Card] = [card for card in sorted_cards if card.suit == suitCount[0]]
-        return Ranking.FLUSH, flush[:5]
+    # Flush has already been accounted for
 
     # Check for straight
     straight : List[Card] = findStraight(sorted_cards)

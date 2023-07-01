@@ -36,11 +36,13 @@ class TestCards:
     def test_card_lt_same_rank(self):
         assert not (Card(FOUR, CLUB) < Card(FOUR, SPADE))
         assert not (Card(FOUR, CLUB) > Card(FOUR, SPADE))
-        # not less than nor greater but not equal; the same but different
+        # not less nor greater than but also not equal; the same but different
     
     def test_card_eq(self):
         assert Card(ACE, CLUB) == Card(ACE, CLUB)
         assert Card(KING, HEART) == Card(KING, HEART)
+        assert Card("Ac") == Card(ACE, CLUB)
+        assert Card("Ks") == Card(KING, SPADE)
     
     def test_card_ne(self):
         assert Card(QUEEN, HEART) != Card(JACK, HEART)

@@ -3,6 +3,8 @@ from cards import Rank, Suit, Card, Deck
 from table import Hand
 from evaluator import Ranking
 
+import pandas as pd
+
 TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING, ACE = Rank.TWO, Rank.THREE, Rank.FOUR, Rank.FIVE, Rank.SIX, Rank.SEVEN, Rank.EIGHT, Rank.NINE, Rank.TEN, Rank.JACK, Rank.QUEEN, Rank.KING, Rank.ACE
 CLUB, DIAMOND, HEART, SPADE = Suit.CLUB, Suit.DIAMOND, Suit.HEART, Suit.SPADE
 def hands():
@@ -30,7 +32,9 @@ def hands():
 
 winCount = [[0 for _ in range(len(Rank))] for _ in range(len(Rank))]
 def getWinCount():
-    return winCount
+    df = pd.DataFrame(winCount, columns=[rank.name for rank in reversed(Rank)], index=[rank.name for rank in reversed(Rank)])
+    df.columns.name = 'Wins'
+    return df
 
 def updateWinCount(hand):
     if len(repr(hand)) == 2:
@@ -48,7 +52,9 @@ def updateWinCount(hand):
 winningHandStrengthCount = [[0 for _ in range(9)] for _ in range(9)]
 
 def getWinningHandStrength():
-    return winningHandStrengthCount
+    df = pd.DataFrame(winningHandStrengthCount,  columns=[rank.name for rank in Ranking], index=[rank.name for rank in Ranking])
+    df.columns.name = 'Board vs. Winner'
+    return df
 
 def updateWinningHandStrength(boardStrength, handStrength):
     winningHandStrengthCount[boardStrength.value-1][handStrength.value-1] += 1
