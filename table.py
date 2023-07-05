@@ -1,9 +1,13 @@
 from cards import Card, Deck
 from typing import List
+from collections import deque
 
 from cards import Rank, Suit
+from player import Player
 TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING, ACE = Rank.TWO, Rank.THREE, Rank.FOUR, Rank.FIVE, Rank.SIX, Rank.SEVEN, Rank.EIGHT, Rank.NINE, Rank.TEN, Rank.JACK, Rank.QUEEN, Rank.KING, Rank.ACE
 CLUB, DIAMOND, HEART, SPADE = Suit.CLUB, Suit.DIAMOND, Suit.HEART, Suit.SPADE
+
+
 
 class Hand():
     def __init__(self, hand : List[Card]):
@@ -71,6 +75,7 @@ class Board():
         self.deck = Deck()
         self.deck.shuffle()
         self.board : List[Card] = []
+        
         # TODO: self.pot
 
     def __repr__(self):
@@ -92,11 +97,16 @@ class Board():
         self.deck.reset()
 
 class Table():
-    def __init__(self, numPlayers : int = 6, buttonPosition : int = 0):
+    def __init__(self, numPlayers : int = 0, buttonPosition : int = 0):
         self.numPlayers = numPlayers
         self.button = buttonPosition
         self.hands : List[Hand(List[Card])] = [Hand([]) for _ in range(numPlayers)]
+        self.playerids = []
+        self.actionQueue = deque()
+        self.inAction = []
         self.board = Board()
+        print("table initialized")
+        
 
     def __str__(self):
         playerHands = [f"P{i}'s Hand: {hand}" for i, hand in enumerate(self.hands)]
@@ -105,13 +115,24 @@ class Table():
     def __len__(self):
         return self.numPlayers
     
-    def addPlayer(self):
-        # TODO: addPlayer
-        pass
+    def addPlayer(self, playerid):
+        self.numPlayers += 1
+        print("player added: " + str(playerid))
+        self.playerids.append(playerid)
+        print("playerids:" + str(self.playerids))
+        self.table = Table(numPlayers=self.numPlayers)
 
-    def removePlayer(self):
-        # TODO: removePlayer
-        pass
+
+    def isValidPlayer(self, playerid):
+        if playerid in self.playerids:
+            return True
+        else:
+            return False
+        
+    def removePlayer(self, playerid):
+        if self.numPlayers > 0 and self.isValidPlayer(playerid):
+            self.numPlayers -= 1
+            self.playerids.pop(playerid)
 
     def dealToHands(self):
         curPlayer : int = (self.button + 1) % self.numPlayers
@@ -119,17 +140,15 @@ class Table():
             card : Card = self.board.deck.drawCard()
             self.hands[curPlayer].append(card)
             curPlayer = (curPlayer + 1) % self.numPlayers
+    
 
-    def commenceRound(self):
-        self.dealToHands()
+        
 
-        # wait
-        self.board.dealToBoard(3)
-        # wait
-        self.board.dealToBoard()
-        # wait
-        self.board.dealToBoard()
-        # wait
+    def endRound(self):
+        self.reset()
+        self.actionQueue = []
+        self.commenceRound()
+    
 
     def reset(self):
         self.board.clearBoard()
