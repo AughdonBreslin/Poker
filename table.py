@@ -120,6 +120,15 @@ class Table():
             self.hands[curPlayer].append(card)
             curPlayer = (curPlayer + 1) % self.numPlayers
 
+    def givePlayerHand(self, player : int, hand : Hand):
+        if self.hands[player] != Hand([]):
+            raise UserWarning("Player already has hand.")
+        for card in hand:
+            if card not in self.board.deck.drawnCards:
+                raise UserWarning("Card not in deck.")
+            self.board.deck.drawnCards.remove(card)
+        self.hands[player] = hand
+
     def commenceRound(self):
         self.dealToHands()
 
@@ -130,6 +139,12 @@ class Table():
         # wait
         self.board.dealToBoard()
         # wait
+    
+    def simulateRound(self, hands : List[Hand] = None, board : List[Card] = None):
+        for i in range(len(hands)):
+            self.givePlayerHand(i, hands[i])
+        
+        self.board.board = board
 
     def reset(self):
         self.board.clearBoard()

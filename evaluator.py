@@ -23,7 +23,7 @@ class Ranking(Enum):
     def __repr__(self):
         return str(self.name)
 
-def findStraight(cards : List[Card]) -> (List[Card] | None):
+def findStraight(cards : List[Card]) -> List[Card]:
     straight : Deque[Card] = deque([], 5)
     for rank in (Rank.ACE, *Rank):
         card = next((card for card in cards if card.rank == rank), None)

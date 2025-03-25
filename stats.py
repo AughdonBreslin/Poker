@@ -58,3 +58,5 @@ def getWinningHandStrength():
 
 def updateWinningHandStrength(boardStrength, handStrength):
     winningHandStrengthCount[boardStrength.value-1][handStrength.value-1] += 1
+
+# TODO: Add a lose count!

@@ -1,0 +1,23 @@
+Headsup Equity Calculator:
+ - Classify player's hand as RRo, RRs, or RR
+ - How to run through boards:
+    - Brute force
+       - (48 * 47 * 46) * (45) * (44)
+       - 
+    - Try to shortcut via suits:
+       - If A and B have same suits, runouts are either that suit or not
+          - How do i deal with 222 flop? Required to multiply by possible combos, could make it worse than brute force
+          - However, I'd only need to run this case for 1/4 suits and then paste it over!
+
+    - Only grab cards that will change hand strength
+       - If there's one card left, check if straight flush possible, quads possible, etc. down to OPP's hand strength.
+       - If there's two cards left, check for running cards that improve your hand - cards that improve OPP's hand more significantly
+       - How do i get to first three cards?
+          - First card can be all 52 (minus drawn)
+          - Second card can be all 52 (minus drawn)
+          - Third card may start to cut off straight flushes
+          - Fourth card may start to cut off quads, boats, flushes, straights
+          - Fifth card may start to cut off trips, two pairs
+      
+
+
