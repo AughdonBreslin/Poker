@@ -16,18 +16,15 @@ def hands():
     for hand in allHands:
         if len(repr(hand)) == 2:
             index = len(Rank)-(hand.hand[0].rank.value[1]-2)-1
-            chart[index][index] = hand
-            continue
-        if repr(hand)[2] == 'o':
+            chart[index][index] = hand  
+        elif repr(hand)[2] == 'o':
             index1 = len(Rank)-(hand.hand[0].rank.value[1]-2)-1
             index2 = len(Rank)-(hand.hand[1].rank.value[1]-2)-1
             chart[index1][index2] = hand
-            continue
-        if repr(hand)[2] == 's':
+        elif repr(hand)[2] == 's':
             index1 = len(Rank)-(hand.hand[1].rank.value[1]-2)-1
             index2 = len(Rank)-(hand.hand[0].rank.value[1]-2)-1
             chart[index1][index2] = hand
-            continue
     return chart
 
 winCount = [[0 for _ in range(len(Rank))] for _ in range(len(Rank))]

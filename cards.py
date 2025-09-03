@@ -96,6 +96,7 @@ class Card:
 class Deck:
     def __init__(self):
         self.deck : List[Card] = list(Card(rank, suit) for rank, suit in it.product(Rank, Suit))
+        self.shuffle()
         self.drawnCards : List[Card] = []
 
     def __repr__(self):
@@ -135,3 +136,7 @@ class Deck:
         self.deck += self.drawnCards
         self.drawnCards = []
         self.shuffle()
+    
+    def remove(self, cards : List[Card]):
+        for card in cards:
+            self.deck.remove(card)

@@ -18,11 +18,13 @@ def play(numPlayers, iterations):
     table = Table(numPlayers)
 
     while(count < iterations):
-        log.info(f"Hand Number {count}\n")
+        # log.info(f"Hand Number {count}\n")
+        # print(f"Hand Number {count}\n")
 
         table.commenceRound()
-        log.info(f"{table}\n")
-        
+        # log.info(f"{table}\n")
+        # print(table)
+
         hands = []
         boardStrength, _ = ev.determineHandStrength([], table.board.board)
 
@@ -30,13 +32,16 @@ def play(numPlayers, iterations):
             hand = ev.determineHandStrength(table.hands[i].hand, table.board.board)
             hands.append(hand)
             # log.info(f"P{i}'s Strength: {str(hand)}")
+            # print(f"P{i}'s Strength: {str(hand)}")
         # log.info("")
+        # print("")
 
         winner : Tuple[Ranking, List[Card]] = max(hands)
 
         winningHands = [(f'P{i}', hand) for i, hand in enumerate(hands) if hand == winner]
-        log.info(f"Winner(s): {winningHands}\n")
-
+        # log.info(f"Winner(s): {winningHands}\n")
+        # print(f"Winner(s): {winningHands}\n")
+        
         # Update stats
         for (player, _) in winningHands:
             st.updateWinCount(table.hands[int(player[1])])
@@ -59,7 +64,7 @@ def play(numPlayers, iterations):
     return winCounts, handStrengthVSBoard
 
 def main():
-    winCounts, handStrengthVSBoard = play(2, 10000000)
+    winCounts, handStrengthVSBoard = play(2, 1000000)
     print(winCounts.to_string())
     print(handStrengthVSBoard.to_string())
     

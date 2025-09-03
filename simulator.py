@@ -14,7 +14,7 @@ CLUB, DIAMOND, HEART, SPADE = Suit.CLUB, Suit.DIAMOND, Suit.HEART, Suit.SPADE
 def sim_play(numPlayers, iterations):
     count = 0
     table = Table(numPlayers)
-    hands = [Hand(Card(ACE, CLUB), Card(ACE, HEART)), Hand(Card(SEVEN, SPADE), Card(SEVEN, DIAMOND))]
+    hands = [Hand([Card(ACE, CLUB), Card(ACE, HEART)]), Hand([Card(SEVEN, SPADE), Card(SEVEN, DIAMOND)])]
     board = None
 
     while(count < iterations):
@@ -59,7 +59,7 @@ def sim_play(numPlayers, iterations):
     return winCounts, handStrengthVSBoard
 
 def main():
-    winCounts, handStrengthVSBoard = play(2, 1000000)
+    winCounts, handStrengthVSBoard = sim_play(2, 1000000)
     print(winCounts.to_string())
     print(handStrengthVSBoard.to_string())
 

@@ -6,8 +6,11 @@ TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING, ACE = R
 CLUB, DIAMOND, HEART, SPADE = Suit.CLUB, Suit.DIAMOND, Suit.HEART, Suit.SPADE
 
 class Hand():
-    def __init__(self, hand : List[Card]):
-        self.hand = sorted(hand)
+    def __init__(self, hand : str | List[Card]):
+        if isinstance(hand, str):
+            self.hand = sorted([Card(hand[i:i+2]) for i in range(0, len(hand), 2)])
+        else:
+            self.hand = sorted(hand)
     
     def __repr__(self):        
         ranks = repr(self.hand[1].rank) + repr(self.hand[0].rank)
@@ -67,10 +70,12 @@ class Hand():
         self.hand = sorted(self.hand)
 
 class Board():
-    def __init__(self):
+    def __init__(self, hands : List[Hand] = [], board : List[Card] = []):
         self.deck = Deck()
-        self.deck.shuffle()
-        self.board : List[Card] = []
+        self.board = board
+        self.deck.remove(board)
+        for hand in hands:
+            self.deck.remove(hand.hand)
         # TODO: self.pot
 
     def __repr__(self):
@@ -92,11 +97,11 @@ class Board():
         self.deck.reset()
 
 class Table():
-    def __init__(self, numPlayers : int = 6, buttonPosition : int = 0):
+    def __init__(self, numPlayers : int = 6, buttonPosition : int = 0, hands : List[Hand] = [], board : List[Card] = []):
         self.numPlayers = numPlayers
         self.button = buttonPosition
-        self.hands : List[Hand(List[Card])] = [Hand([]) for _ in range(numPlayers)]
-        self.board = Board()
+        self.hands = hands or [Hand([]) for _ in range(self.numPlayers)]
+        self.board = Board(hands, board)
 
     def __str__(self):
         playerHands = [f"P{i}'s Hand: {hand}" for i, hand in enumerate(self.hands)]
@@ -107,11 +112,13 @@ class Table():
     
     def addPlayer(self):
         # TODO: addPlayer
-        pass
+        self.numPlayers += 1
+        self.hands.append(Hand([]))
 
     def removePlayer(self):
         # TODO: removePlayer
-        pass
+        self.numPlayers -= 1
+        self.hands.pop()
 
     def dealToHands(self):
         curPlayer : int = (self.button + 1) % self.numPlayers
@@ -121,6 +128,8 @@ class Table():
             curPlayer = (curPlayer + 1) % self.numPlayers
 
     def givePlayerHand(self, player : int, hand : Hand):
+        if player > len(self.hands):
+            raise UserWarning("Player does not exist.")
         if self.hands[player] != Hand([]):
             raise UserWarning("Player already has hand.")
         for card in hand:
@@ -150,5 +159,8 @@ class Table():
         self.board.clearBoard()
         for hand in self.hands:
             hand.hand = []
+    
+    def moveButton(self):
+        self.button = (1 + self.button) % self.numPlayers
         
         
