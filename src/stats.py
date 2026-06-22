@@ -1,5 +1,5 @@
 
-from cards import Rank, Suit, Card, Deck
+from card import Rank, Suit, Card, Deck
 from table import Hand
 from evaluator import Ranking
 

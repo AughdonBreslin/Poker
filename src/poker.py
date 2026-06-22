@@ -1,4 +1,4 @@
-from cards import Card, Deck, Rank, Suit
+from card import Card, Deck, Rank, Suit
 from table import Board, Hand, Table
 from evaluator import Ranking
 from typing import List, Tuple

@@ -1,5 +1,4 @@
 
-
 class Player:
     def __init__(self, number : int, stackSize: int):
         self.number = number

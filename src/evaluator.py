@@ -2,11 +2,8 @@ from collections import Counter, deque
 from enum import Enum
 from typing import List, Deque, Tuple, Counter
 
-from cards import Suit, Rank, Card
+from card import Suit, Rank, Card
 from table import Hand
-
-TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING, ACE = Rank.TWO, Rank.THREE, Rank.FOUR, Rank.FIVE, Rank.SIX, Rank.SEVEN, Rank.EIGHT, Rank.NINE, Rank.TEN, Rank.JACK, Rank.QUEEN, Rank.KING, Rank.ACE
-CLUB, DIAMOND, HEART, SPADE = Suit.CLUB, Suit.DIAMOND, Suit.HEART, Suit.SPADE
 
 class Ranking(Enum):
     HIGHCARD = 1
@@ -55,6 +52,73 @@ class HandStrength:
     
     def __repr__(self):
         return f"HS({self.ranking}, {self.cards})"
+
+
+def _straight_rank_values(rank_values : List[int]) -> tuple[int, ...] | None:
+    straight : Deque[int] = deque([], 5)
+    unique_ranks = set(rank_values)
+    for rank in (14, *range(2, 15)):
+        if rank in unique_ranks:
+            straight.appendleft(rank)
+        else:
+            if len(straight) == 5:
+                break
+            straight.clear()
+    if len(straight) == 5:
+        return tuple(straight)
+    return None
+
+
+def hand_strength_key(hand : List[Card], board : List[Card]) -> tuple[int, ...]:
+    cards = hand + board
+    rank_values : List[int] = sorted((card.rank.value[1] for card in cards), reverse=True)
+    rank_counter : Counter[int] = Counter(rank_values)
+
+    suit_to_ranks : dict[Suit, list[int]] = {}
+    for card in cards:
+        suit_to_ranks.setdefault(card.suit, []).append(card.rank.value[1])
+    for ranks in suit_to_ranks.values():
+        ranks.sort(reverse=True)
+
+    flush_ranks = next((ranks for ranks in suit_to_ranks.values() if len(ranks) >= 5), None)
+    if flush_ranks is not None:
+        straight_flush = _straight_rank_values(flush_ranks)
+        if straight_flush is not None:
+            return (Ranking.STRAIGHTFLUSH.value, *straight_flush)
+        return (Ranking.FLUSH.value, *flush_ranks[:5])
+
+    quads_rank = next((rank for rank, count in rank_counter.items() if count == 4), None)
+    if quads_rank is not None:
+        kicker = max(rank for rank in rank_values if rank != quads_rank)
+        return (Ranking.QUADS.value, quads_rank, quads_rank, quads_rank, quads_rank, kicker)
+
+    trip_ranks = sorted((rank for rank, count in rank_counter.items() if count == 3), reverse=True)
+    if len(trip_ranks) >= 2:
+        return (Ranking.BOAT.value, trip_ranks[0], trip_ranks[0], trip_ranks[0], trip_ranks[1], trip_ranks[1])
+
+    pair_ranks = sorted((rank for rank, count in rank_counter.items() if count == 2), reverse=True)
+    if trip_ranks and pair_ranks:
+        return (Ranking.BOAT.value, trip_ranks[0], trip_ranks[0], trip_ranks[0], pair_ranks[0], pair_ranks[0])
+
+    straight = _straight_rank_values(rank_values)
+    if straight is not None:
+        return (Ranking.STRAIGHT.value, *straight)
+
+    if trip_ranks:
+        trip_rank = trip_ranks[0]
+        kickers = sorted((rank for rank in rank_values if rank != trip_rank), reverse=True)[:2]
+        return (Ranking.TRIPS.value, trip_rank, trip_rank, trip_rank, *kickers)
+
+    if len(pair_ranks) >= 2:
+        kicker = max(rank for rank in rank_values if rank != pair_ranks[0] and rank != pair_ranks[1])
+        return (Ranking.TWOPAIR.value, pair_ranks[0], pair_ranks[0], pair_ranks[1], pair_ranks[1], kicker)
+
+    if pair_ranks:
+        pair_rank = pair_ranks[0]
+        kickers = sorted((rank for rank in rank_values if rank != pair_rank), reverse=True)[:3]
+        return (Ranking.PAIR.value, pair_rank, pair_rank, *kickers)
+
+    return (Ranking.HIGHCARD.value, *rank_values[:5])
 
 def findStraight(cards : List[Card]) -> List[Card]:
     straight : Deque[Card] = deque([], 5)
