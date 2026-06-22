@@ -1,15 +1,8 @@
-from cards import Rank, Suit, Card, Deck
+from card import Rank, Suit, Card, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING, ACE, CLUB, DIAMOND, HEART, SPADE
 from table import Hand, Board, Table
-TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING, ACE = Rank.TWO, Rank.THREE, Rank.FOUR, Rank.FIVE, Rank.SIX, Rank.SEVEN, Rank.EIGHT, Rank.NINE, Rank.TEN, Rank.JACK, Rank.QUEEN, Rank.KING, Rank.ACE
-CLUB, DIAMOND, HEART, SPADE = Suit.CLUB, Suit.DIAMOND, Suit.HEART, Suit.SPADE
-
-# Instructions:
-# Uses nose2, so
-#  $pip install nose2, then
-#  python -m nose2 in Player directory 
-#  python -m nose2 -v for verbose
 
 class TestTable:
+    pass
     def test_hand_repr(self):
         hand = Hand([Card(FOUR, SPADE), Card(FIVE, SPADE)])
         assert hash(hand) == hash('54s')
