@@ -1,7 +1,6 @@
-__pycache__/*
-*.pyc
-.vscode/
+**/__pycache__/
+**/.pytest_cache/
+**/.vscode/
 venv/
-.env
-.pytest_cache/
-logfile
+.venv/
+build_lookup.log
